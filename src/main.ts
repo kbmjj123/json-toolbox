@@ -1,6 +1,6 @@
 import { Notice, Plugin } from 'obsidian'
 import { JsonViewerModal } from './viewerModal'
-import { JsonToolboxSettingTab } from './settings'
+import { JsonToolboxSettingTab, DEFAULT_SETTINGS, type JsonToolboxSettings } from './settings'
 import { formatJson, validateJson, toggleJsonYaml } from './commands'
 import { extractJsonFromText, codeBlockRangeAtLine } from './editorInput'
 import { registerJsonCodeBlocks } from './jsonCodeBlock'
@@ -12,7 +12,9 @@ type TransformResult =
   | { ok: false; error: string }
 
 export default class JsonToolboxPlugin extends Plugin {
-  onload(): void {
+  settings: JsonToolboxSettings = { ...DEFAULT_SETTINGS }
+
+  async onload(): Promise<void> {
     // Reading mode: ```json / ```yaml blocks render as a rich tree automatically.
     registerJsonCodeBlocks(this)
 
@@ -85,7 +87,15 @@ export default class JsonToolboxPlugin extends Plugin {
       },
     })
 
-    this.addSettingTab(new JsonToolboxSettingTab(this.app as never, this))
+    this.addSettingTab(new JsonToolboxSettingTab(this.app, this))
+  }
+
+  async loadSettings(): Promise<void> {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+  }
+
+  async saveSettings(): Promise<void> {
+    await this.saveData(this.settings)
   }
 
   onunload(): void {
@@ -162,7 +172,7 @@ export default class JsonToolboxPlugin extends Plugin {
       { line: lastContentLine, ch: editor.getLine(lastContentLine).length },
     )
 
-    if (result.language) {
+    if (result.language && this.settings.syncFenceLanguage) {
       const fenceLine = editor.getLine(range.startLine)
       if (fenceLine.trimStart().startsWith('```')) {
         editor.replaceRange(

@@ -52,7 +52,11 @@ function appendThumbnail(parent: HTMLElement, src: string): void {
   parent.appendChild(img)
 }
 
-function renderValue(parent: HTMLElement, value: unknown): void {
+function renderValue(parent: HTMLElement, value: unknown, previews = true): void {
+  if (!previews) {
+    parent.appendChild(el('span', valueClass(value), formatPrimitive(value)))
+    return
+  }
   const kind = detectValueKind(value)
 
   if (isColorValue(value)) {
@@ -121,16 +125,21 @@ function renderValue(parent: HTMLElement, value: unknown): void {
   appendKindChip(parent, kind)
 }
 
-function renderNode(parent: HTMLElement, node: JsonNode, depth: number): void {
+function renderNode(
+  parent: HTMLElement,
+  node: JsonNode,
+  depth: number,
+  options: RenderOptions,
+): void {
   const row = el('div', 'json-toolbox-node')
   row.style.paddingLeft = `${depth * 14}px`
 
   const expandable = node.children.length > 0
 
   if (expandable) {
-    const toggle = el('span', 'json-toolbox-toggle', '▸')
+    const toggle = el('span', 'json-toolbox-toggle', options.expandByDefault ? '▾' : '▸')
     const childBox = el('div')
-    let expanded = false
+    let expanded = options.expandByDefault
 
     toggle.addEventListener('click', (event) => {
       event.stopPropagation()
@@ -153,8 +162,8 @@ function renderNode(parent: HTMLElement, node: JsonNode, depth: number): void {
     )
     parent.appendChild(row)
 
-    childBox.style.display = 'none'
-    node.children.forEach((child) => renderNode(childBox, child, depth + 1))
+    childBox.style.display = options.expandByDefault ? '' : 'none'
+    node.children.forEach((child) => renderNode(childBox, child, depth + 1, options))
     parent.appendChild(childBox)
     return
   }
@@ -164,16 +173,31 @@ function renderNode(parent: HTMLElement, node: JsonNode, depth: number): void {
     row.appendChild(el('span', 'json-toolbox-key', String(node.key)))
     row.appendChild(el('span', 'json-toolbox-punct', ': '))
   }
-  renderValue(row, node.value)
+  renderValue(row, node.value, options.previews)
   parent.appendChild(row)
 }
 
-export function renderTree(container: HTMLElement, root: JsonNode): void {
+export interface RenderOptions {
+  /** Expand every collapsible node on first render. */
+  expandByDefault?: boolean
+  /** Render inline media previews (image, colour, link, jwt, base64...). */
+  previews?: boolean
+}
+
+export function renderTree(
+  container: HTMLElement,
+  root: JsonNode,
+  options: RenderOptions = {},
+): void {
+  const opts: RenderOptions = {
+    expandByDefault: options.expandByDefault ?? false,
+    previews: options.previews ?? true,
+  }
   container.innerHTML = ''
   container.classList.add('json-toolbox-tree')
-  root.children.forEach((child) => renderNode(container, child, 0))
+  root.children.forEach((child) => renderNode(container, child, 0, opts))
   if (root.children.length === 0 && root.kind === 'primitive') {
-    renderNode(container, root, 0)
+    renderNode(container, root, 0, opts)
   }
 }
 

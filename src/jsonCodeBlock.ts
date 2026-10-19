@@ -1,8 +1,9 @@
 import type { Plugin } from 'obsidian'
 import yaml from 'js-yaml'
 import { parseJson, buildTree } from './jsonTree'
-import { renderTree, renderTable } from './treeView'
+import { renderTree, renderTable, type RenderOptions } from './treeView'
 import { toTable } from './commands'
+import type { JsonToolboxSettings } from './settings'
 
 export type BlockLanguage = 'json' | 'yaml'
 
@@ -52,10 +53,10 @@ export function matchJsonBlock(lang: string, text: string): ParsedBlock | null {
 }
 
 /**
- * Replace one fenced code block with the rich tree, keeping the original source
- * in a collapsed section underneath.
+ * Replace one fenced code block with the rich tree/table, keeping the original
+ * source in a collapsed section underneath (unless disabled in settings).
  */
-export function processCodeElement(codeEl: HTMLElement): boolean {
+export function processCodeElement(codeEl: HTMLElement, settings: JsonToolboxSettings): boolean {
   const pre = codeEl.parentElement
   if (!pre || pre.tagName !== 'PRE') return false
 
@@ -75,28 +76,35 @@ export function processCodeElement(codeEl: HTMLElement): boolean {
       (item) => item !== null && typeof item === 'object' && !Array.isArray(item),
     )
 
-  if (isObjectArray) {
+  const treeOptions: RenderOptions = {
+    previews: settings.inlinePreviews,
+    expandByDefault: settings.expandTreeByDefault,
+  }
+
+  if (isObjectArray && settings.arrayAsTable) {
     const table = toTable(parsed.rawText)
     if (table.ok) renderTable(treeBox, table.headers, table.rows)
-    else renderTree(treeBox, buildTree(parsed.root))
+    else renderTree(treeBox, buildTree(parsed.root), treeOptions)
   } else {
-    renderTree(treeBox, buildTree(parsed.root))
+    renderTree(treeBox, buildTree(parsed.root), treeOptions)
   }
 
   wrapper.appendChild(treeBox)
 
-  const details = document.createElement('details')
-  details.className = 'json-toolbox-raw'
-  const summary = document.createElement('summary')
-  summary.textContent = `原始 ${parsed.language.toUpperCase()}`
-  details.appendChild(summary)
+  if (settings.keepOriginalSource) {
+    const details = document.createElement('details')
+    details.className = 'json-toolbox-raw'
+    const summary = document.createElement('summary')
+    summary.textContent = `原始 ${parsed.language.toUpperCase()}`
+    details.appendChild(summary)
 
-  const raw = document.createElement('pre')
-  raw.className = 'json-toolbox-raw-pre'
-  raw.textContent = parsed.rawText
-  details.appendChild(raw)
+    const raw = document.createElement('pre')
+    raw.className = 'json-toolbox-raw-pre'
+    raw.textContent = parsed.rawText
+    details.appendChild(raw)
 
-  wrapper.appendChild(details)
+    wrapper.appendChild(details)
+  }
 
   pre.replaceWith(wrapper)
   return true
@@ -104,7 +112,12 @@ export function processCodeElement(codeEl: HTMLElement): boolean {
 
 /** Auto-render JSON/YAML code blocks while reading (no command needed). */
 export function registerJsonCodeBlocks(plugin: Plugin): void {
+  const getSettings = () =>
+    (plugin as unknown as { settings: JsonToolboxSettings }).settings
+
   plugin.registerMarkdownPostProcessor((el: HTMLElement) => {
+    if (!getSettings().readingModeRender) return
+
     const codes: HTMLElement[] = []
 
     if (el.tagName === 'PRE') {
@@ -114,6 +127,7 @@ export function registerJsonCodeBlocks(plugin: Plugin): void {
       el.querySelectorAll('pre > code').forEach((code) => codes.push(code as HTMLElement))
     }
 
-    codes.forEach((code) => processCodeElement(code))
+    const settings = getSettings()
+    codes.forEach((code) => processCodeElement(code, settings))
   })
 }

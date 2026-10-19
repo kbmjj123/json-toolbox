@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { matchJsonBlock, processCodeElement } from '../jsonCodeBlock'
+import { DEFAULT_SETTINGS } from '../settings'
 
 describe('matchJsonBlock', () => {
   it('matches an explicit json block', () => {
@@ -53,7 +54,7 @@ describe('processCodeElement', () => {
     const source = '{"a":1,"b":"#ff0000"}'
     const { pre, code } = makePre('json', source)
 
-    expect(processCodeElement(code)).toBe(true)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(true)
 
     const block = document.querySelector('.json-toolbox-block')
     expect(block).toBeTruthy()
@@ -67,20 +68,20 @@ describe('processCodeElement', () => {
 
   it('renders yaml blocks too', () => {
     const { code } = makePre('yaml', 'title: hi\n')
-    expect(processCodeElement(code)).toBe(true)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(true)
     expect(document.querySelector('.json-toolbox-block')?.textContent).toContain('title')
   })
 
   it('does nothing for non-json blocks', () => {
     const { pre, code } = makePre('bash', 'echo hi')
-    expect(processCodeElement(code)).toBe(false)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(false)
     expect(document.querySelector('.json-toolbox-block')).toBeNull()
     expect(pre.parentElement).toBe(document.body)
   })
 
   it('renders an array of objects as a table', () => {
     const { code } = makePre('json', '[{"name":"Ada","year":1843},{"name":"Alan","year":1936}]')
-    expect(processCodeElement(code)).toBe(true)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(true)
     const table = document.querySelector('.json-toolbox-table')
     expect(table).toBeTruthy()
     const headers = document.querySelectorAll('.json-toolbox-table th')
@@ -90,14 +91,14 @@ describe('processCodeElement', () => {
 
   it('renders a plain object as a tree, not a table', () => {
     const { code } = makePre('json', '{"name":"Ada","year":1843}')
-    expect(processCodeElement(code)).toBe(true)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(true)
     expect(document.querySelector('.json-toolbox-table')).toBeNull()
     expect(document.querySelector('.json-toolbox-tree')).toBeTruthy()
   })
 
   it('renders an array of scalars as a tree (table only fits object rows)', () => {
     const { code } = makePre('json', '["a","b","c"]')
-    expect(processCodeElement(code)).toBe(true)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(true)
     expect(document.querySelector('.json-toolbox-table')).toBeNull()
     expect(document.querySelector('.json-toolbox-tree')).toBeTruthy()
   })
@@ -105,6 +106,32 @@ describe('processCodeElement', () => {
   it('does nothing when the code element is not inside a <pre>', () => {
     const code = document.createElement('code')
     document.body.appendChild(code)
-    expect(processCodeElement(code)).toBe(false)
+    expect(processCodeElement(code, DEFAULT_SETTINGS)).toBe(false)
+  })
+
+  it('honours arrayAsTable=false (object array stays a tree)', () => {
+    const { code } = makePre('json', '[{"name":"Ada","year":1843}]')
+    expect(processCodeElement(code, { ...DEFAULT_SETTINGS, arrayAsTable: false })).toBe(true)
+    expect(document.querySelector('.json-toolbox-table')).toBeNull()
+    expect(document.querySelector('.json-toolbox-tree')).toBeTruthy()
+  })
+
+  it('honours keepOriginalSource=false (no raw section)', () => {
+    const { code } = makePre('json', '{"a":1}')
+    expect(processCodeElement(code, { ...DEFAULT_SETTINGS, keepOriginalSource: false })).toBe(true)
+    expect(document.querySelector('.json-toolbox-raw')).toBeNull()
+  })
+
+  it('honours inlinePreviews=false (no colour swatch)', () => {
+    const { code } = makePre('json', '{"color":"#ff0000"}')
+    expect(processCodeElement(code, { ...DEFAULT_SETTINGS, inlinePreviews: false })).toBe(true)
+    expect(document.querySelector('.json-toolbox-swatch')).toBeNull()
+  })
+
+  it('honours expandTreeByDefault=true (toggle starts expanded)', () => {
+    const { code } = makePre('json', '{"outer":{"inner":1}}')
+    expect(processCodeElement(code, { ...DEFAULT_SETTINGS, expandTreeByDefault: true })).toBe(true)
+    const toggle = document.querySelector('.json-toolbox-toggle') as HTMLElement
+    expect(toggle.textContent).toBe('▾')
   })
 })

@@ -55,6 +55,18 @@ describe('renderTree', () => {
     renderTree(container, buildTree({ outer: { inner: 1 } }))
     expect(container.querySelector('.json-toolbox-toggle')).toBeTruthy()
   })
+
+  it('omits previews when previews:false (no colour swatch)', () => {
+    renderTree(container, buildTree({ color: '#ff0000' }), { previews: false })
+    expect(container.querySelector('.json-toolbox-swatch')).toBeNull()
+    expect(container.textContent).toContain('#ff0000')
+  })
+
+  it('expands by default when expandByDefault:true', () => {
+    renderTree(container, buildTree({ outer: { inner: 1 } }), { expandByDefault: true })
+    const toggle = container.querySelector('.json-toolbox-toggle') as HTMLElement
+    expect(toggle.textContent).toBe('▾')
+  })
 })
 
 describe('renderTable', () => {
