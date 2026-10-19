@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { t, lang, SITE_URL } from '../i18n'
+import { t, lang, SITE_URL, KO_FI_URL } from '../i18n'
 
 describe('i18n', () => {
   it('resolves a known key to a real (non-key) string', () => {
@@ -19,5 +19,9 @@ describe('i18n', () => {
 
   it('exposes the canonical site URL', () => {
     expect(SITE_URL).toBe('https://jsontoolbox.cc')
+  })
+
+  it('exposes the Ko-fi donation URL', () => {
+    expect(KO_FI_URL).toBe('https://ko-fi.com/kbmjj123')
   })
 })

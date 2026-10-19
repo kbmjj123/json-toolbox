@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from 'obsidian'
 import type JsonToolboxPlugin from './main'
-import { SITE_URL, t } from './i18n'
+import { SITE_URL, KO_FI_URL, t } from './i18n'
 
 export interface JsonToolboxSettings {
   /** Reading mode: auto-render ```json / ```yaml blocks as a rich tree/table. */
@@ -119,5 +119,18 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
           }),
         )
     }
+
+    // ── Ko-fi donation ────────────────────────────────────
+    new Setting(containerEl)
+      .setName(t('setting.kofi.name'))
+      .setDesc(t('setting.kofi.desc'))
+      .addButton((btn) =>
+        btn
+          .setButtonText('☕ Ko-fi')
+          .setCta()
+          .onClick(() => {
+            window.open(KO_FI_URL, '_blank')
+          }),
+      )
   }
 }

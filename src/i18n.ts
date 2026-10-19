@@ -1,6 +1,7 @@
 import { moment } from 'obsidian'
 
 export const SITE_URL = 'https://jsontoolbox.cc'
+export const KO_FI_URL = 'https://ko-fi.com/kbmjj123'
 
 export type Lang = 'zh' | 'en'
 
@@ -43,6 +44,9 @@ const zh: Dict = {
   'setting.syncFenceLanguage.desc':
     '编辑模式下运行「格式化 / JSON↔YAML」时，自动把 ``` 后的语言标识同步成 json 或 yaml。',
 
+  'setting.kofi.name': '支持作者',
+  'setting.kofi.desc': '如果这个工具对你有用，欢迎在 Ko-fi 上请我喝杯咖啡 ☕',
+
   'notice.noInput': '请把光标放在 JSON 代码块内，或选中一段 JSON',
   'notice.noActiveEditor': '没有活动的编辑器',
   'notice.validJson': '✓ JSON 合法',
@@ -78,6 +82,9 @@ const en: Dict = {
   'setting.syncFenceLanguage.name': 'Sync fence language on convert',
   'setting.syncFenceLanguage.desc':
     'When formatting or converting in editing mode, also rewrite the ``` language tag to json or yaml.',
+
+  'setting.kofi.name': 'Support the author',
+  'setting.kofi.desc': 'If this tool is helpful, you can buy me a coffee on Ko-fi ☕',
 
   'notice.noInput': 'Place the cursor inside a JSON code block, or select some JSON',
   'notice.noActiveEditor': 'No active editor',
