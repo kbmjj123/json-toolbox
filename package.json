@@ -2,6 +2,7 @@
   "name": "obsidian-json-toolbox",
   "version": "1.0.2",
   "private": true,
+  "packageManager": "pnpm@10.25.0",
   "description": "Obsidian plugin: rich JSON viewer with inline previews for images, colors, links, timestamps, JWT and more.",
   "type": "module",
   "license": "MIT",
