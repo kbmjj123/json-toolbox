@@ -13,6 +13,16 @@
 
 ## 步骤
 
+### 0. 填写 GitHub 仓库 About（发布前）
+
+在仓库首页右侧 About 框点 ⚙️ 编辑，填写：
+
+- **Description**（建议英文）：
+  `Rich JSON/YAML viewing and formatting inside Obsidian — auto-render code blocks as collapsible trees or tables, with 14 inline previews, fully local.`
+- **Website**：`https://jsontoolbox.cc`
+- **Topics**：`obsidian`、`obsidian-plugin`、`json`、`yaml`、`markdown`、`productivity`、`formatter`、`viewer`
+- 可选：**Social preview** 用仓库根 `banner.svg` 导出的 PNG（GitHub 不支持 SVG 社交图，需先转 PNG）。
+
 ### 1. 构建
 
 ```bash
