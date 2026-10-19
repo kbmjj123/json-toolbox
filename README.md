@@ -18,7 +18,16 @@ View JSON in Obsidian as a collapsible **rich tree** with inline previews for im
 
 ## Screenshots
 
-> Add real screenshots of the reading-mode tree, color-swatch preview, table, and settings page here to boost appeal.
+> Place images in `assets/screenshots/` using the exact filenames below (broken images before they are added are expected placeholders).
+
+<p align="center">
+  <img src="assets/screenshots/reading-tree.png" width="360" alt="Reading-mode rich tree"/>
+  <img src="assets/screenshots/previews.png" width="360" alt="Inline previews (color swatch, image, link)"/>
+</p>
+<p align="center">
+  <img src="assets/screenshots/table.png" width="360" alt="Array of objects rendered as a table"/>
+  <img src="assets/screenshots/settings.png" width="360" alt="Settings tab with the 6 toggles and Ko-fi button"/>
+</p>
 
 ## Commands
 

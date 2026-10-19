@@ -18,7 +18,16 @@
 
 ## 截图
 
-> 建议在此插入阅读模式富树、色块预览、表格、设置页的真机截图。
+> 把截图放进 `assets/screenshots/`，文件名需与下方一致（图片就位前会显示破图，属正常占位）。
+
+<p align="center">
+  <img src="assets/screenshots/reading-tree.png" width="360" alt="阅读模式富树"/>
+  <img src="assets/screenshots/previews.png" width="360" alt="内联预览（色块、图片、链接）"/>
+</p>
+<p align="center">
+  <img src="assets/screenshots/table.png" width="360" alt="对象数组渲染为表格"/>
+  <img src="assets/screenshots/settings.png" width="360" alt="设置页（6 个开关 + Ko-fi 按钮）"/>
+</p>
 
 ## 命令
 

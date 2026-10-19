@@ -1,0 +1,5 @@
+# 截图放置目录。把以下 4 个文件放进本目录，README 即自动引用：
+#   reading-tree.png  – 阅读模式富树（折叠/展开）
+#   previews.png      – 内联预览：颜色块、图片、可点击链接等
+#   table.png         – 对象数组渲染为表格
+#   settings.png      – 设置页（6 个开关 + Ko-fi 按钮）
