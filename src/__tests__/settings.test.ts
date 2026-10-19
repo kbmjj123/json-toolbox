@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { SETTINGS, DEFAULT_SETTINGS, type JsonToolboxSettings } from '../settings'
+import { t } from '../i18n'
 
 describe('JsonToolboxSettings', () => {
   it('has sensible, safe defaults', () => {
@@ -11,18 +12,20 @@ describe('JsonToolboxSettings', () => {
     expect(DEFAULT_SETTINGS.syncFenceLanguage).toBe(true)
   })
 
-  it('exposes six toggles, one per behaviour, wired to its field', () => {
+  it('exposes six toggles, each key resolvable to a real string', () => {
     expect(SETTINGS.length).toBe(6)
-    expect(SETTINGS.map((s) => s.name)).toEqual([
-      '阅读模式自动渲染',
-      '对象数组渲染为表格',
-      '内联资源预览',
-      '富树默认展开',
-      '保留原始源码',
-      '转换时同步代码块语言',
-    ])
+    SETTINGS.forEach((def) => {
+      const name = t(def.nameKey)
+      const desc = t(def.descKey)
+      expect(typeof name).toBe('string')
+      expect(name.length).toBeGreaterThan(0)
+      expect(name).not.toBe(def.nameKey)
+      expect(typeof desc).toBe('string')
+      expect(desc.length).toBeGreaterThan(0)
+    })
+  })
 
-    // Flipping each toggle through its setter flips exactly that field.
+  it('wires each toggle getter/setter to its field', () => {
     SETTINGS.forEach((def) => {
       const s: JsonToolboxSettings = { ...DEFAULT_SETTINGS }
       const before = def.get(s)

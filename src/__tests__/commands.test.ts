@@ -16,10 +16,13 @@ describe('validateJson', () => {
   it('passes valid JSON', () => {
     expect(validateJson('{"a":1}').ok).toBe(true)
   })
-  it('fails invalid JSON with message', () => {
+  it('fails invalid JSON with a message', () => {
     const result = validateJson('{"a":}')
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toContain('JSON')
+    if (!result.ok) {
+      expect(typeof result.error).toBe('string')
+      expect(result.error.length).toBeGreaterThan(0)
+    }
   })
 })
 

@@ -2,8 +2,7 @@ import { Modal } from 'obsidian'
 import { buildTree, parseJson } from './jsonTree'
 import { renderTree, renderTable } from './treeView'
 import { toTable } from './commands'
-
-export const SITE_URL = 'https://jsontoolbox.cc'
+import { SITE_URL, t } from './i18n'
 
 export type ViewerMode = 'tree' | 'table'
 
@@ -30,7 +29,7 @@ export class JsonViewerModal extends Modal {
         node.className = 'json-toolbox-error'
         this.contentEl.appendChild(node)
       }
-      node.textContent = `Invalid JSON: ${parsed.error}`
+      node.textContent = t('modal.invalidJson') + parsed.error
       this.appendFooter()
       return
     }
@@ -42,7 +41,7 @@ export class JsonViewerModal extends Modal {
     if (this.mode === 'table') {
       const table = toTable(this.input)
       if (table.ok) renderTable(body, table.headers, table.rows)
-      else body.textContent = `Cannot build table: ${table.error}`
+      else body.textContent = t('modal.cannotBuildTable') + table.error
     } else {
       renderTree(body, buildTree(parsed.root))
     }

@@ -4,6 +4,7 @@ import { parseJson, buildTree } from './jsonTree'
 import { renderTree, renderTable, type RenderOptions } from './treeView'
 import { toTable } from './commands'
 import type { JsonToolboxSettings } from './settings'
+import { t } from './i18n'
 
 export type BlockLanguage = 'json' | 'yaml'
 
@@ -95,7 +96,7 @@ export function processCodeElement(codeEl: HTMLElement, settings: JsonToolboxSet
     const details = document.createElement('details')
     details.className = 'json-toolbox-raw'
     const summary = document.createElement('summary')
-    summary.textContent = `原始 ${parsed.language.toUpperCase()}`
+    summary.textContent = t('raw.title') + parsed.language.toUpperCase()
     details.appendChild(summary)
 
     const raw = document.createElement('pre')

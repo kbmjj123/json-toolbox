@@ -17,7 +17,7 @@ export function validateJson(input: string): Ok<Record<string, never>> | Err {
     return { ok: true } as Ok<Record<string, never>>
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    return { ok: false, error: `Invalid JSON: ${message}` }
+    return { ok: false, error: message }
   }
 }
 

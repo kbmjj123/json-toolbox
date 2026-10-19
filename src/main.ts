@@ -4,8 +4,7 @@ import { JsonToolboxSettingTab, DEFAULT_SETTINGS, type JsonToolboxSettings } fro
 import { formatJson, validateJson, toggleJsonYaml } from './commands'
 import { extractJsonFromText, codeBlockRangeAtLine } from './editorInput'
 import { registerJsonCodeBlocks } from './jsonCodeBlock'
-
-const NO_INPUT = 'Place the cursor inside a JSON code block, or select some JSON'
+import { t } from './i18n'
 
 type TransformResult =
   | { ok: true; output: string; notice?: string; language?: string }
@@ -24,7 +23,7 @@ export default class JsonToolboxPlugin extends Plugin {
       callback: () => {
         const input = this.readJsonInput()
         if (!input) {
-          new Notice(NO_INPUT)
+          new Notice(t('notice.noInput'))
           return
         }
         new JsonViewerModal(this.app, input, 'tree').open()
@@ -48,11 +47,11 @@ export default class JsonToolboxPlugin extends Plugin {
       callback: () => {
         const input = this.readJsonInput()
         if (!input) {
-          new Notice(NO_INPUT)
+          new Notice(t('notice.noInput'))
           return
         }
         const result = validateJson(input)
-        new Notice(result.ok ? '✓ Valid JSON' : `✗ ${result.error}`)
+        new Notice(result.ok ? t('notice.validJson') : t('notice.invalidJson') + result.error)
       },
     })
 
@@ -66,7 +65,7 @@ export default class JsonToolboxPlugin extends Plugin {
             ? {
                 ok: true,
                 output: result.output,
-                notice: `Converted ${result.direction}`,
+                notice: t('notice.convertedTo') + result.direction,
                 language: result.direction === 'json→yaml' ? 'yaml' : 'json',
               }
             : { ok: false, error: result.error }
@@ -80,7 +79,7 @@ export default class JsonToolboxPlugin extends Plugin {
       callback: () => {
         const input = this.readJsonInput()
         if (!input) {
-          new Notice(NO_INPUT)
+          new Notice(t('notice.noInput'))
           return
         }
         new JsonViewerModal(this.app, input, 'table').open()
@@ -126,7 +125,7 @@ export default class JsonToolboxPlugin extends Plugin {
   private transform(transform: (text: string) => TransformResult): void {
     const editor = this.app.workspace.activeEditor?.editor
     if (!editor) {
-      new Notice('No active editor')
+      new Notice(t('notice.noActiveEditor'))
       return
     }
 
@@ -134,34 +133,34 @@ export default class JsonToolboxPlugin extends Plugin {
     if (selected && selected.trim()) {
       const input = extractJsonFromText(selected)
       if (!input) {
-        new Notice(NO_INPUT)
+        new Notice(t('notice.noInput'))
         return
       }
       const result = transform(input)
       if (!result.ok) {
-        new Notice(`✗ ${result.error}`)
+        new Notice(t('notice.error') + result.error)
         return
       }
       editor.replaceSelection(result.output)
-      new Notice(result.notice ?? '✓ Done')
+      new Notice(result.notice ?? t('notice.done'))
       return
     }
 
     const range = codeBlockRangeAtLine(editor.getValue(), editor.getCursor().line)
     if (!range) {
-      new Notice(NO_INPUT)
+      new Notice(t('notice.noInput'))
       return
     }
 
     const input = extractJsonFromText(range.content)
     if (!input) {
-      new Notice(NO_INPUT)
+      new Notice(t('notice.noInput'))
       return
     }
 
     const result = transform(input)
     if (!result.ok) {
-      new Notice(`✗ ${result.error}`)
+      new Notice(t('notice.error') + result.error)
       return
     }
 
@@ -183,6 +182,6 @@ export default class JsonToolboxPlugin extends Plugin {
       }
     }
 
-    new Notice(result.notice ?? '✓ Done')
+    new Notice(result.notice ?? t('notice.done'))
   }
 }
