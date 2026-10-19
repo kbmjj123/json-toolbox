@@ -30,7 +30,7 @@ Copy the block below into a `json` code block in reading mode to see the rich tr
   },
   "color": "#7c3aed",
   "background": "#22d3ee",
-  "image": "https://picsum.photos/240/160",
+  "image": "https://raw.githubusercontent.com/kbmjj123/json-toolbox/main/logo.png",
   "website": "https://jsontoolbox.cc",
   "repo": "https://github.com/kbmjj123/json-toolbox",
   "email": "hello@jsontoolbox.cc",
