@@ -11,5 +11,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],
+    // Polyfills Obsidian's DOM helpers (createEl & co.) for jsdom.
+    setupFiles: ['./src/__tests__/setup.ts'],
   },
 })

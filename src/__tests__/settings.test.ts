@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { SETTINGS, DEFAULT_SETTINGS, type JsonToolboxSettings } from '../settings'
+import {
+  SETTINGS,
+  DEFAULT_SETTINGS,
+  JsonToolboxSettingTab,
+  type JsonToolboxSettings,
+} from '../settings'
+import type { App, SettingDefinitionGroup } from 'obsidian'
 import { t } from '../i18n'
 
 describe('JsonToolboxSettings', () => {
@@ -31,6 +37,27 @@ describe('JsonToolboxSettings', () => {
       const before = def.get(s)
       def.set(s, !before)
       expect(def.get(s)).toBe(!before)
+    })
+  })
+
+  it('exposes a declarative definition per toggle (Obsidian 1.13+ search)', () => {
+    const tab = new JsonToolboxSettingTab({} as App, {
+      settings: { ...DEFAULT_SETTINGS },
+    } as never)
+    const [group] = tab.getSettingDefinitions() as SettingDefinitionGroup[]
+    expect(group.heading).toBe('JSON Toolbox')
+
+    const controls = (group.items ?? []) as unknown as {
+      name: string
+      desc?: string
+      control: { key: string }
+    }[]
+
+    SETTINGS.forEach((def) => {
+      const item = controls.find((child) => child.control?.key === def.key)
+      expect(item).toBeTruthy()
+      expect(item?.name).toBe(t(def.nameKey))
+      expect(item?.desc).toBe(t(def.descKey))
     })
   })
 })

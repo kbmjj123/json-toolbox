@@ -1,6 +1,21 @@
-import { App, PluginSettingTab, Setting } from 'obsidian'
+import { App, PluginSettingTab, Setting, type SettingDefinitionItem, type SettingGroupItem } from 'obsidian'
 import type JsonToolboxPlugin from './main'
 import { SITE_URL, KO_FI_URL, t } from './i18n'
+
+const KO_FI_BUTTON = 'https://ko-fi.com/img/githubbutton_sm.svg'
+
+/** Official Ko-fi brand button, appended into a setting's control area. */
+function appendKofiButton(controlEl: HTMLElement): void {
+  controlEl.createEl(
+    'a',
+    {
+      cls: 'json-toolbox-kofi',
+      href: KO_FI_URL,
+      attr: { target: '_blank', rel: 'noopener noreferrer' },
+    },
+    (link) => link.createEl('img', { attr: { src: KO_FI_BUTTON, alt: 'Ko-fi' } }),
+  )
+}
 
 export interface JsonToolboxSettings {
   /** Reading mode: auto-render ```json / ```yaml blocks as a rich tree/table. */
@@ -27,6 +42,8 @@ export const DEFAULT_SETTINGS: JsonToolboxSettings = {
 }
 
 export interface SettingDef {
+  /** Field name in `JsonToolboxSettings`, also used by the declarative API. */
+  key: keyof JsonToolboxSettings
   nameKey: string
   descKey: string
   get: (s: JsonToolboxSettings) => boolean
@@ -36,6 +53,7 @@ export interface SettingDef {
 /** Data-driven list so the tab can be unit-tested without the Obsidian UI. */
 export const SETTINGS: SettingDef[] = [
   {
+    key: 'readingModeRender',
     nameKey: 'setting.readingModeRender.name',
     descKey: 'setting.readingModeRender.desc',
     get: (s) => s.readingModeRender,
@@ -44,6 +62,7 @@ export const SETTINGS: SettingDef[] = [
     },
   },
   {
+    key: 'arrayAsTable',
     nameKey: 'setting.arrayAsTable.name',
     descKey: 'setting.arrayAsTable.desc',
     get: (s) => s.arrayAsTable,
@@ -52,6 +71,7 @@ export const SETTINGS: SettingDef[] = [
     },
   },
   {
+    key: 'inlinePreviews',
     nameKey: 'setting.inlinePreviews.name',
     descKey: 'setting.inlinePreviews.desc',
     get: (s) => s.inlinePreviews,
@@ -60,6 +80,7 @@ export const SETTINGS: SettingDef[] = [
     },
   },
   {
+    key: 'expandTreeByDefault',
     nameKey: 'setting.expandTreeByDefault.name',
     descKey: 'setting.expandTreeByDefault.desc',
     get: (s) => s.expandTreeByDefault,
@@ -68,6 +89,7 @@ export const SETTINGS: SettingDef[] = [
     },
   },
   {
+    key: 'keepOriginalSource',
     nameKey: 'setting.keepOriginalSource.name',
     descKey: 'setting.keepOriginalSource.desc',
     get: (s) => s.keepOriginalSource,
@@ -76,6 +98,7 @@ export const SETTINGS: SettingDef[] = [
     },
   },
   {
+    key: 'syncFenceLanguage',
     nameKey: 'setting.syncFenceLanguage.name',
     descKey: 'setting.syncFenceLanguage.desc',
     get: (s) => s.syncFenceLanguage,
@@ -97,14 +120,16 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    containerEl.createEl('h2', { text: 'JSON Toolbox' })
+    new Setting(containerEl).setName('JSON Toolbox').setHeading()
 
     // ── About ──────────────────────────────────────────────
     const about = containerEl.createDiv({ cls: 'json-toolbox-footer' })
     about.appendText(t('settings.about') + ' ')
-    const link = about.createEl('a', { text: SITE_URL, href: SITE_URL })
-    link.setAttribute('target', '_blank')
-    link.setAttribute('rel', 'noopener noreferrer')
+    about.createEl('a', {
+      text: SITE_URL,
+      href: SITE_URL,
+      attr: { target: '_blank', rel: 'noopener noreferrer' },
+    })
     containerEl.createEl('hr')
 
     // ── Toggles ────────────────────────────────────────────
@@ -124,12 +149,49 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
     const kofiSetting = new Setting(containerEl)
       .setName(t('setting.kofi.name'))
       .setDesc(t('setting.kofi.desc'))
-    const kofiLink = document.createElement('a')
-    kofiLink.href = KO_FI_URL
-    kofiLink.addClass('json-toolbox-kofi')
-    kofiLink.setAttribute('target', '_blank')
-    kofiLink.setAttribute('rel', 'noopener noreferrer')
-    kofiLink.innerHTML = '<img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Ko-fi" />'
-    kofiSetting.controlEl.appendChild(kofiLink)
+    appendKofiButton(kofiSetting.controlEl)
+  }
+
+  /**
+   * Declarative definitions used by Obsidian 1.13+ so these settings are
+   * indexed by the settings search. Older versions keep using `display()`.
+   */
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    const toggles: SettingGroupItem[] = SETTINGS.map((def) => ({
+      name: t(def.nameKey),
+      desc: t(def.descKey),
+      control: {
+        type: 'toggle',
+        key: def.key,
+        defaultValue: def.get(DEFAULT_SETTINGS),
+      },
+    }))
+
+    return [
+      {
+        type: 'group',
+        heading: 'JSON Toolbox',
+        items: [
+          {
+            name: 'JSON Toolbox',
+            desc: t('settings.about'),
+            searchable: false,
+            render: (setting) => {
+              setting.controlEl.createEl('a', {
+                text: SITE_URL,
+                href: SITE_URL,
+                attr: { target: '_blank', rel: 'noopener noreferrer' },
+              })
+            },
+          },
+          ...toggles,
+          {
+            name: t('setting.kofi.name'),
+            desc: t('setting.kofi.desc'),
+            render: (setting) => appendKofiButton(setting.controlEl),
+          },
+        ],
+      },
+    ]
   }
 }

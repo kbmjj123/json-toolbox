@@ -1,5 +1,5 @@
 import type { Plugin } from 'obsidian'
-import yaml from 'js-yaml'
+import { parse as parseYaml } from 'yaml'
 import { parseJson, buildTree } from './jsonTree'
 import { renderTree, renderTable, type RenderOptions } from './treeView'
 import { toTable } from './commands'
@@ -33,7 +33,7 @@ export function matchJsonBlock(lang: string, text: string): ParsedBlock | null {
 
   if (lang === 'yaml' || lang === 'yml') {
     try {
-      const loaded = yaml.load(trimmed)
+      const loaded = parseYaml(trimmed)
       if (loaded !== null && typeof loaded === 'object') {
         return { root: loaded, language: 'yaml', rawText: text }
       }
@@ -64,10 +64,8 @@ export function processCodeElement(codeEl: HTMLElement, settings: JsonToolboxSet
   const parsed = matchJsonBlock(languageOf(codeEl), codeEl.textContent ?? '')
   if (!parsed) return false
 
-  const wrapper = document.createElement('div')
-  wrapper.className = 'json-toolbox-block'
-
-  const treeBox = document.createElement('div')
+  const wrapper = createEl('div', { cls: 'json-toolbox-block' })
+  const treeBox = wrapper.createDiv()
 
   // An array of plain objects reads best as a table; everything else as a tree.
   const isObjectArray =
@@ -90,21 +88,10 @@ export function processCodeElement(codeEl: HTMLElement, settings: JsonToolboxSet
     renderTree(treeBox, buildTree(parsed.root), treeOptions)
   }
 
-  wrapper.appendChild(treeBox)
-
   if (settings.keepOriginalSource) {
-    const details = document.createElement('details')
-    details.className = 'json-toolbox-raw'
-    const summary = document.createElement('summary')
-    summary.textContent = t('raw.title') + parsed.language.toUpperCase()
-    details.appendChild(summary)
-
-    const raw = document.createElement('pre')
-    raw.className = 'json-toolbox-raw-pre'
-    raw.textContent = parsed.rawText
-    details.appendChild(raw)
-
-    wrapper.appendChild(details)
+    const details = wrapper.createEl('details', { cls: 'json-toolbox-raw' })
+    details.createEl('summary', { text: t('raw.title') + parsed.language.toUpperCase() })
+    details.createEl('pre', { cls: 'json-toolbox-raw-pre', text: parsed.rawText })
   }
 
   pre.replaceWith(wrapper)

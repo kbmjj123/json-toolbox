@@ -1,4 +1,4 @@
-import yaml from 'js-yaml'
+import { stringify as stringifyYaml, parse as parseYaml } from 'yaml'
 
 export type Ok<T> = { ok: true } & T
 export type Err = { ok: false; error: string }
@@ -26,13 +26,13 @@ export function toggleJsonYaml(
 ): Ok<{ output: string; direction: 'json→yaml' | 'yaml→json' }> | Err {
   try {
     const parsed = JSON.parse(input)
-    return { ok: true, output: yaml.dump(parsed), direction: 'json→yaml' }
+    return { ok: true, output: stringifyYaml(parsed), direction: 'json→yaml' }
   } catch {
     // not JSON — fall through and try YAML
   }
 
   try {
-    const loaded = yaml.load(input)
+    const loaded = parseYaml(input)
     if (loaded === null || typeof loaded !== 'object') {
       return { ok: false, error: 'Input is neither JSON nor a YAML mapping' }
     }

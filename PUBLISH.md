@@ -23,25 +23,26 @@
 - **Topics**：`obsidian`、`obsidian-plugin`、`json`、`yaml`、`markdown`、`productivity`、`formatter`、`viewer`
 - 可选：**Social preview** 用仓库根 `banner.svg` 导出的 PNG（GitHub 不支持 SVG 社交图，需先转 PNG）。
 
-### 1. 构建
+### 1. 更新版本号
+
+同时改 `manifest.json` 与 `package.json` 的 `version`（两者保持一致）。
+
+### 2. 打 tag 触发自动发布
 
 ```bash
-cd /Users/zhenggl/Desktop/personal_upgrade/json/json-toolbox
-pnpm build
+git commit -am "release: 1.0.0"
+git tag 1.0.0
+git push origin main --tags
 ```
 
-产物在仓库根：`main.js`、`manifest.json`、`styles.css`。
+`.github/workflows/release.yml` 随即运行：安装依赖 → typecheck/test → 校验 tag 与 `manifest.json` 版本一致 → `pnpm build` → 为 `main.js` / `manifest.json` / `styles.css` 生成 **build provenance attestation** → 用该 tag 建 release，标题即 tag，上传三个文件。
 
-### 2. 打 GitHub Release
-
-1. 打开 https://github.com/kbmjj123/json-toolbox/releases/new
-2. **Choose a tag** 填 `1.0.0`（必须与 `manifest.json` 的 `version` 一致；首次发布用 `1.0.0`）
-3. **Title** 填 `v1.0.0`
-4. **Description / Release notes** 粘贴下方英文模板
-5. 拖入三个文件：**`main.js`**、**`manifest.json`**、**`styles.css`**
-6. 点 **Publish release**
-
-> 必须三个文件都传。Obsidian 市场会从 release 资产里同时拉取这三者。
+> 不要手动上传资产：那样不会产生 attestation，Obsidian 审查会给出
+> “Missing GitHub artifact attestations for release assets” 的建议项。
+>
+> 应急时才用 `gh release create <tag> main.js manifest.json styles.css --title <tag> --generate-notes`
+> 手动补发（无 attestation）；release **标题必须包含 `manifest.json` 的版本号**，
+> 否则会被判 “release name does not include the version”。
 
 ### 3. 提交到 Obsidian 社区市场
 
@@ -55,8 +56,9 @@ pnpm build
 
 ### 4. 后续更新
 
-- 改代码 → `pnpm build` → 递增版本（如 `1.0.1`）：同时改 `manifest.json` 的 `version` 并打同名 tag `1.0.1`
-- release tag 必须与 `manifest.json` 的 `version` 一致，否则市场拉不到更新
+- 改代码 → 递增版本（如 `1.0.1`）：同时改 `manifest.json` 与 `package.json` 的 `version`，打同名 tag `1.0.1` 推送
+- release tag 必须与 `manifest.json` 的 `version` 一致，否则工作流会直接失败、市场也拉不到更新
+- 建议 `versions.json` 由发布流程维护：目前未提供，Obsidian 会直接按 release 的 manifest 判定版本
 
 ## Release notes 模板（英文，用于 GitHub Release）
 
