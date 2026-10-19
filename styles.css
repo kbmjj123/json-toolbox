@@ -62,3 +62,30 @@
   color: var(--text-faint);
 }
 .json-toolbox-error { color: var(--color-red, #e06c75); }
+
+/* ── Inline code-block rendering (reading mode) ───────────────── */
+.json-toolbox-block {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  background: var(--background-secondary);
+}
+.json-toolbox-raw { margin-top: 6px; }
+.json-toolbox-raw summary {
+  cursor: pointer;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller, 12px);
+  user-select: none;
+}
+.json-toolbox-raw-pre {
+  margin: 4px 0 0;
+  padding: 8px;
+  background: var(--background-primary);
+  border-radius: 4px;
+  overflow: auto;
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--font-ui-smaller, 12px);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

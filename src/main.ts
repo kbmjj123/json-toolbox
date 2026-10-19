@@ -3,6 +3,7 @@ import { JsonViewerModal } from './viewerModal'
 import { JsonToolboxSettingTab } from './settings'
 import { formatJson, validateJson, toggleJsonYaml } from './commands'
 import { extractJsonFromText, codeBlockRangeAtLine } from './editorInput'
+import { registerJsonCodeBlocks } from './jsonCodeBlock'
 
 const NO_INPUT = 'Place the cursor inside a JSON code block, or select some JSON'
 
@@ -12,6 +13,9 @@ type TransformResult =
 
 export default class JsonToolboxPlugin extends Plugin {
   onload(): void {
+    // Reading mode: ```json / ```yaml blocks render as a rich tree automatically.
+    registerJsonCodeBlocks(this)
+
     this.addCommand({
       id: 'open-json-viewer',
       name: 'Open JSON Viewer',
