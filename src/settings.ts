@@ -120,17 +120,16 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
         )
     }
 
-    // ── Ko-fi donation ────────────────────────────────────
-    new Setting(containerEl)
+    // ── Ko-fi donation (official brand button) ───────────
+    const kofiSetting = new Setting(containerEl)
       .setName(t('setting.kofi.name'))
       .setDesc(t('setting.kofi.desc'))
-      .addButton((btn) =>
-        btn
-          .setButtonText('☕ Ko-fi')
-          .setCta()
-          .onClick(() => {
-            window.open(KO_FI_URL, '_blank')
-          }),
-      )
+    const kofiLink = document.createElement('a')
+    kofiLink.href = KO_FI_URL
+    kofiLink.addClass('json-toolbox-kofi')
+    kofiLink.setAttribute('target', '_blank')
+    kofiLink.setAttribute('rel', 'noopener noreferrer')
+    kofiLink.innerHTML = '<img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Ko-fi" />'
+    kofiSetting.controlEl.appendChild(kofiLink)
   }
 }
