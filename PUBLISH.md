@@ -30,8 +30,8 @@
 ### 2. 打 tag 触发自动发布
 
 ```bash
-git commit -am "release: 1.0.0"
-git tag 1.0.0
+git commit -am "release: 1.0.1"
+git tag 1.0.1
 git push origin main --tags
 ```
 
