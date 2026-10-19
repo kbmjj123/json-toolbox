@@ -1,7 +1,8 @@
 import type { Plugin } from 'obsidian'
 import yaml from 'js-yaml'
 import { parseJson, buildTree } from './jsonTree'
-import { renderTree } from './treeView'
+import { renderTree, renderTable } from './treeView'
+import { toTable } from './commands'
 
 export type BlockLanguage = 'json' | 'yaml'
 
@@ -65,7 +66,23 @@ export function processCodeElement(codeEl: HTMLElement): boolean {
   wrapper.className = 'json-toolbox-block'
 
   const treeBox = document.createElement('div')
-  renderTree(treeBox, buildTree(parsed.root))
+
+  // An array of plain objects reads best as a table; everything else as a tree.
+  const isObjectArray =
+    Array.isArray(parsed.root) &&
+    parsed.root.length > 0 &&
+    parsed.root.every(
+      (item) => item !== null && typeof item === 'object' && !Array.isArray(item),
+    )
+
+  if (isObjectArray) {
+    const table = toTable(parsed.rawText)
+    if (table.ok) renderTable(treeBox, table.headers, table.rows)
+    else renderTree(treeBox, buildTree(parsed.root))
+  } else {
+    renderTree(treeBox, buildTree(parsed.root))
+  }
+
   wrapper.appendChild(treeBox)
 
   const details = document.createElement('details')

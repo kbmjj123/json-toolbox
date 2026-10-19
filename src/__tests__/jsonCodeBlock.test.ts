@@ -78,6 +78,30 @@ describe('processCodeElement', () => {
     expect(pre.parentElement).toBe(document.body)
   })
 
+  it('renders an array of objects as a table', () => {
+    const { code } = makePre('json', '[{"name":"Ada","year":1843},{"name":"Alan","year":1936}]')
+    expect(processCodeElement(code)).toBe(true)
+    const table = document.querySelector('.json-toolbox-table')
+    expect(table).toBeTruthy()
+    const headers = document.querySelectorAll('.json-toolbox-table th')
+    expect(headers[0]?.textContent).toBe('name')
+    expect(headers[1]?.textContent).toBe('year')
+  })
+
+  it('renders a plain object as a tree, not a table', () => {
+    const { code } = makePre('json', '{"name":"Ada","year":1843}')
+    expect(processCodeElement(code)).toBe(true)
+    expect(document.querySelector('.json-toolbox-table')).toBeNull()
+    expect(document.querySelector('.json-toolbox-tree')).toBeTruthy()
+  })
+
+  it('renders an array of scalars as a tree (table only fits object rows)', () => {
+    const { code } = makePre('json', '["a","b","c"]')
+    expect(processCodeElement(code)).toBe(true)
+    expect(document.querySelector('.json-toolbox-table')).toBeNull()
+    expect(document.querySelector('.json-toolbox-tree')).toBeTruthy()
+  })
+
   it('does nothing when the code element is not inside a <pre>', () => {
     const code = document.createElement('code')
     document.body.appendChild(code)
