@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { extractJsonFromText, codeBlockAtLine } from '../editorInput'
+import { extractJsonFromText, codeBlockAtLine, codeBlockRangeAtLine } from '../editorInput'
 
 describe('extractJsonFromText', () => {
   it('returns raw JSON objects and arrays as-is', () => {
@@ -38,5 +38,26 @@ describe('codeBlockAtLine', () => {
     const multi = ['```json', '{"first":1}', '```', '', '```json', '{"second":2}', '```'].join('\n')
     expect(codeBlockAtLine(multi, 1)).toBe('{"first":1}')
     expect(codeBlockAtLine(multi, 5)).toBe('{"second":2}')
+  })
+})
+
+describe('codeBlockRangeAtLine', () => {
+  const doc = ['# Title', '', '```json', '{"a":1}', '```', '', 'prose'].join('\n')
+
+  it('returns fence line numbers plus content', () => {
+    expect(codeBlockRangeAtLine(doc, 3)).toEqual({
+      startLine: 2,
+      endLine: 4,
+      content: '{"a":1}',
+    })
+  })
+
+  it('returns multi-line content joined with newlines', () => {
+    const multi = ['```', '{', '  "a": 1', '}', '```'].join('\n')
+    expect(codeBlockRangeAtLine(multi, 2)?.content).toBe('{\n  "a": 1\n}')
+  })
+
+  it('returns null outside blocks', () => {
+    expect(codeBlockRangeAtLine(doc, 6)).toBeNull()
   })
 })

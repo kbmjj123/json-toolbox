@@ -14,7 +14,7 @@ const FENCE = /^\s*```/
  *
  * Accepts raw JSON (`{...}` / `[...]`), otherwise falls back to the contents of
  * the first fenced code block. Returns `null` when neither is present, so the
- * caller can tell the user to select something instead of parsing garbage.
+ * caller can tell the user what to do instead of parsing garbage.
  */
 export function extractJsonFromText(text: string): string | null {
   const trimmed = text.trim()
@@ -28,13 +28,22 @@ export function extractJsonFromText(text: string): string | null {
   return null
 }
 
+export interface CodeBlockRange {
+  /** Index of the opening fence line. */
+  startLine: number
+  /** Index of the closing fence line. */
+  endLine: number
+  /** Everything between the two fences. */
+  content: string
+}
+
 /**
- * Contents of the fenced code block that contains `line` (0-based).
+ * The fenced code block containing `line` (0-based), with its fence line numbers.
  *
- * Used when there is no selection: the cursor simply sits inside a code block,
- * which should be enough to run a read-only command.
+ * Commands run without a selection: the cursor simply sits inside a block, and
+ * the caller needs both the content and the range so it can write back into it.
  */
-export function codeBlockAtLine(value: string, line: number): string | null {
+export function codeBlockRangeAtLine(value: string, line: number): CodeBlockRange | null {
   const lines = value.split('\n')
   let start: number | null = null
 
@@ -44,10 +53,17 @@ export function codeBlockAtLine(value: string, line: number): string | null {
     if (start === null) {
       start = i
     } else {
-      if (line > start && line < i) return lines.slice(start + 1, i).join('\n')
+      if (line > start && line < i) {
+        return { startLine: start, endLine: i, content: lines.slice(start + 1, i).join('\n') }
+      }
       start = null
     }
   }
 
   return null
+}
+
+/** Just the contents of the code block containing `line`, if any. */
+export function codeBlockAtLine(value: string, line: number): string | null {
+  return codeBlockRangeAtLine(value, line)?.content ?? null
 }
