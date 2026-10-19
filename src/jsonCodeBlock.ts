@@ -33,7 +33,7 @@ export function matchJsonBlock(lang: string, text: string): ParsedBlock | null {
 
   if (lang === 'yaml' || lang === 'yml') {
     try {
-      const loaded = parseYaml(trimmed)
+      const loaded = parseYaml(trimmed) as unknown
       if (loaded !== null && typeof loaded === 'object') {
         return { root: loaded, language: 'yaml', rawText: text }
       }
@@ -64,7 +64,7 @@ export function processCodeElement(codeEl: HTMLElement, settings: JsonToolboxSet
   const parsed = matchJsonBlock(languageOf(codeEl), codeEl.textContent ?? '')
   if (!parsed) return false
 
-  const wrapper = createEl('div', { cls: 'json-toolbox-block' })
+  const wrapper = createDiv({ cls: 'json-toolbox-block' })
   const treeBox = wrapper.createDiv()
 
   // An array of plain objects reads best as a table; everything else as a tree.
@@ -110,7 +110,7 @@ export function registerJsonCodeBlocks(plugin: Plugin): void {
 
     if (el.tagName === 'PRE') {
       const code = el.querySelector('code')
-      if (code) codes.push(code as HTMLElement)
+      if (code) codes.push(code)
     } else {
       el.querySelectorAll('pre > code').forEach((code) => codes.push(code as HTMLElement))
     }

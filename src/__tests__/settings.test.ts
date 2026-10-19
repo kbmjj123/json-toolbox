@@ -45,7 +45,6 @@ describe('JsonToolboxSettings', () => {
       settings: { ...DEFAULT_SETTINGS },
     } as never)
     const [group] = tab.getSettingDefinitions() as SettingDefinitionGroup[]
-    expect(group.heading).toBe('JSON Toolbox')
 
     const controls = (group.items ?? []) as unknown as {
       name: string

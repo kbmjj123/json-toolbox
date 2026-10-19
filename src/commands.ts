@@ -25,14 +25,14 @@ export function toggleJsonYaml(
   input: string,
 ): Ok<{ output: string; direction: 'json→yaml' | 'yaml→json' }> | Err {
   try {
-    const parsed = JSON.parse(input)
+    const parsed = JSON.parse(input) as unknown
     return { ok: true, output: stringifyYaml(parsed), direction: 'json→yaml' }
   } catch {
     // not JSON — fall through and try YAML
   }
 
   try {
-    const loaded = parseYaml(input)
+    const loaded = parseYaml(input) as unknown
     if (loaded === null || typeof loaded !== 'object') {
       return { ok: false, error: 'Input is neither JSON nor a YAML mapping' }
     }
@@ -45,7 +45,10 @@ export function toggleJsonYaml(
 function cell(value: unknown): string {
   if (value === null) return 'null'
   if (typeof value === 'object') return JSON.stringify(value)
-  return String(value)
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value)
+  }
+  return JSON.stringify(value) ?? 'null'
 }
 
 export function toTable(input: string): Ok<{ headers: string[]; rows: string[][] }> | Err {

@@ -120,7 +120,8 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    new Setting(containerEl).setName('JSON Toolbox').setHeading()
+    // No heading row: the settings tab is already titled with the plugin name,
+    // and repeating it trips `settings-tab/no-problematic-settings-headings`.
 
     // ── About ──────────────────────────────────────────────
     const about = containerEl.createDiv({ cls: 'json-toolbox-footer' })
@@ -170,7 +171,6 @@ export class JsonToolboxSettingTab extends PluginSettingTab {
     return [
       {
         type: 'group',
-        heading: 'JSON Toolbox',
         items: [
           {
             name: 'JSON Toolbox',

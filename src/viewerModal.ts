@@ -22,7 +22,7 @@ export class JsonViewerModal extends Modal {
 
     const parsed = parseJson(this.input.trim())
     if (!parsed.ok) {
-      this.contentEl.createEl('div', {
+      this.contentEl.createDiv({
         cls: 'json-toolbox-error',
         text: t('modal.invalidJson') + parsed.error,
       })

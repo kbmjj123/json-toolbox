@@ -33,7 +33,8 @@ function valueClass(value: unknown): string {
 function formatPrimitive(value: unknown): string {
   if (value === null) return 'null'
   if (typeof value === 'string') return `"${value}"`
-  return String(value)
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  return JSON.stringify(value) ?? 'null'
 }
 
 /** Append a small chip such as `jwt`, `uuid`, `ip`, or a decoded timestamp. */
@@ -77,10 +78,10 @@ function renderValue(parent: HTMLElement, value: unknown, previews = true): void
   }
 
   if (kind === 'url' || kind === 'audio' || kind === 'video' || kind === 'pdf') {
-    parent.createEl('a', {
+      parent.createEl('a', {
       cls: 'json-toolbox-kind',
       href: String(value),
-      text: 'open',
+      text: 'Open',
       attr: { target: '_blank', rel: 'noopener noreferrer' },
     })
     if (kind !== 'url') appendKindChip(parent, kind)
@@ -91,7 +92,7 @@ function renderValue(parent: HTMLElement, value: unknown, previews = true): void
     parent.createEl('a', {
       cls: 'json-toolbox-kind',
       href: `mailto:${String(value)}`,
-      text: 'mailto',
+      text: 'Mailto',
     })
     return
   }

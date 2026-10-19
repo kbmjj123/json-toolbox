@@ -4,7 +4,7 @@
 
 ## 前置检查（每次发布前）
 
-- [ ] `manifest.json` 的 `version` 与本次 release tag **完全一致**（如 `1.0.0`）
+- [ ] `manifest.json` 的 `version` 与本次 release tag **完全一致**（如 `1.0.2`）
 - [ ] `id` 未被占用、且不含 `obsidian`
 - [ ] 仓库根有 `manifest.json` / `README.md` / `LICENSE`
 - [ ] `.gitignore` 已忽略 `main.js`（`main.js` 只走 release 资产，不进 git）
@@ -30,8 +30,8 @@
 ### 2. 打 tag 触发自动发布
 
 ```bash
-git commit -am "release: 1.0.1"
-git tag 1.0.1
+git commit -am "release: 1.0.2"
+git tag 1.0.2
 git push origin main --tags
 ```
 
@@ -63,7 +63,7 @@ git push origin main --tags
 ## Release notes 模板（英文，用于 GitHub Release）
 
 ```
-# JSON Toolbox 1.0.0
+# JSON Toolbox 1.0.2
 
 First release of the JSON Toolbox plugin for Obsidian.
 

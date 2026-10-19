@@ -1,6 +1,6 @@
 {
   "name": "obsidian-json-toolbox",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Obsidian plugin: rich JSON viewer with inline previews for images, colors, links, timestamps, JWT and more.",
   "type": "module",
@@ -9,7 +9,8 @@
     "dev": "node esbuild.config.mjs --watch",
     "build": "node esbuild.config.mjs --production",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
   },
   "dependencies": {
     "yaml": "^2.8.1"
@@ -17,12 +18,17 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "esbuild": "^0.24.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.4.2",
     "jsdom": "^25.0.1",
     "obsidian": "^1.14.4",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.72.0",
     "vitest": "^2.1.8"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

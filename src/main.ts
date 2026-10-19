@@ -19,7 +19,7 @@ export default class JsonToolboxPlugin extends Plugin {
 
     this.addCommand({
       id: 'open-json-viewer',
-      name: 'Open JSON Viewer',
+      name: 'Open JSON viewer',
       callback: () => {
         const input = this.readJsonInput()
         if (!input) {
@@ -75,7 +75,7 @@ export default class JsonToolboxPlugin extends Plugin {
 
     this.addCommand({
       id: 'json-to-table',
-      name: 'JSON → Table/CSV',
+      name: 'JSON → table/CSV',
       callback: () => {
         const input = this.readJsonInput()
         if (!input) {
@@ -90,7 +90,8 @@ export default class JsonToolboxPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+    const data = (await this.loadData()) as Partial<JsonToolboxSettings> | null
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, data ?? {})
   }
 
   async saveSettings(): Promise<void> {
