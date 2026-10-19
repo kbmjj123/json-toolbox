@@ -16,6 +16,42 @@ View JSON in Obsidian as a collapsible **rich tree** with inline previews for im
 - **Fully local**: parsing, formatting and conversion run inside your vault. No telemetry, no accounts, no cloud sync.
 - **6 settings toggles**, localized to your Obsidian language (Chinese / English).
 
+## Example
+
+Copy the block below into a `json` code block in reading mode to see the rich tree, the array-of-objects table, and every inline preview (color, image, link, email, media, timestamp, JWT, Base64, UUID, IP, Markdown, regex):
+
+```json
+{
+  "title": "JSON Toolbox demo",
+  "nested": {
+    "level1": {
+      "level2": { "leaf": "deep value", "count": 42 }
+    }
+  },
+  "color": "#7c3aed",
+  "background": "#22d3ee",
+  "image": "https://picsum.photos/240/160",
+  "website": "https://jsontoolbox.cc",
+  "repo": "https://github.com/kbmjj123/json-toolbox",
+  "email": "hello@jsontoolbox.cc",
+  "audio": "https://www.w3.org/2008/WebVideo/TestMedia/audio.mp3",
+  "video": "https://www.w3.org/2008/WebVideo/TestMedia/clip.mp4",
+  "document": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+  "timestamp": "2026-10-19T14:30:00Z",
+  "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqc29uLXRvb2xib3giLCJuYW1lIjoiQWRhIExvdmVsYWNlIiwicm9sZSI6ImRlbW8iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTg5MzQ1NjAwMH0.PsDKpBWjl6DnutkZ7eO-bDqfBsf4bd3TL2rNrtoDPi0",
+  "base64": "SGVsbG8gZnJvbSBKU09OIFRvb2xib3ghIFRoaXMgc3RyaW5nIGlzIEJhc2U2NC1kZWNvZGFibGUu",
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "ip": "192.168.1.1",
+  "markdown": "**bold** and [a link](https://obsidian.md)",
+  "regex": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$",
+  "people": [
+    { "name": "Ada Lovelace", "born": 1815, "field": "math" },
+    { "name": "Alan Turing",  "born": 1912, "field": "cs" },
+    { "name": "Grace Hopper", "born": 1906, "field": "cs" }
+  ]
+}
+```
+
 ## Screenshots
 
 > Place images in `assets/screenshots/` using the exact filenames below (broken images before they are added are expected placeholders).
