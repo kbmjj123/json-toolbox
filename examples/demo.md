@@ -23,16 +23,14 @@ A nested object collapses into an expandable tree.
 
 ## 2. Array of objects → table
 
-When every element of an array is an object with the same keys, it renders as a table.
+When every element of a top-level array is an object with the same keys, it renders as a table.
 
 ```json
-{
-  "people": [
-    { "name": "Ada Lovelace", "born": 1815, "field": "math" },
-    { "name": "Alan Turing",  "born": 1912, "field": "cs" },
-    { "name": "Grace Hopper", "born": 1906, "field": "cs" }
-  ]
-}
+[
+  { "name": "Ada Lovelace", "born": 1815, "field": "math" },
+  { "name": "Alan Turing",  "born": 1912, "field": "cs" },
+  { "name": "Grace Hopper", "born": 1906, "field": "cs" }
+]
 ```
 
 ## 3. Inline previews
