@@ -10,6 +10,7 @@
 - [ ] `.gitignore` 已忽略 `main.js`（`main.js` 只走 release 资产，不进 git）
 - [ ] 已通过 `pnpm test` 与 `pnpm typecheck`
 - [ ] 已 `pnpm build` 生成最新 `main.js`
+- [ ] 依赖锁文件只有 `pnpm-lock.yaml`（**不要**提交 `package-lock.json` / `yarn.lock`，也不要用 npm 装依赖）
 
 ## 步骤
 
